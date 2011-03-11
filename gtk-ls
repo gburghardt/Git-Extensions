@@ -1,0 +1,135 @@
+#!/bin/bash
+
+function print_usage() {
+	echo "#    gtk-ls"
+	echo "#    List files added, copied, renamed, deleted and modified between two branches and/or tags."
+	echo "#"
+	echo "#    Usage:"
+	echo "#"
+	echo "#    gtk ls"
+	echo "#        Lists all files touched between current branch and master"
+	echo "#"
+	echo "#    gtk ls mybranch"
+	echo "#        Lists all files touched between mybranch and current branch"
+	echo "#"
+	echo "#    gtk ls branch1 branch2"
+	echo "#        Lists all files touched between branch1 and branch2"
+	echo "#"
+	echo "#    Options:"
+	echo "#"
+	echo "#    -a List only added files"
+	echo "#    -c List only copied files"
+	echo "#    -d List only deleted files"
+	echo "#    -m List only modified files"
+	echo "#    -r List only renamed files"
+	echo "#"
+	echo "#    Examples:"
+	echo "#"
+	echo "#    gtk ls -a branch1 branch2"
+	echo "#        List only added files between branch1 and branch2"
+	echo "#"
+	echo "#    gtk ls -a -d branch1 branch2"
+	echo "#        List only added and deleted files between branch1 and branch2"
+	echo "#"
+	echo "#    gtk ls -m -d"
+	echo "#        List only modified and deleted files between master and current branch"
+}
+
+files_added=""
+files_copied=""
+files_deleted=""
+files_modified=""
+files_renamed=""
+
+flags=""
+
+ref_1=""
+ref_2=""
+
+if [ -z "$1" ]
+then
+	print_usage
+	exit 0
+fi
+
+# gather input from command line
+while [ "$1" != "" ]
+do
+    case "$1" in
+		-m)
+			shift
+			flags="${flags}M"
+			;;
+		-a)
+			shift
+			flags="${flags}A"
+		    ;;
+		-d)
+			shift
+			flags="${flags}D"
+		    ;;
+		-c)
+			shift
+			flags="${flags}C"
+			;;
+		-r)
+			shift
+			flags="${flags}R"
+			;;
+		--help)
+			print_usage
+			exit $?
+			;;
+		*)
+			break
+	esac
+done
+
+if [ -z "$1" ]; then
+	ref_1="master"
+	ref_2=`gtk current_branch`
+elif [ -z "$2" ]; then
+	ref_1="$1"
+	ref_2=`gtk current_branch`
+else
+	ref_1="$1"
+	ref_2="$2"
+fi
+
+cmd="git diff --name-status -C $ref_1 $ref_2 | grep -E '^[$flags]' | sed 's/^[$flags]\s*\(.*\)/\1/'"
+echo $cmd
+$cmd
+
+exit $?
+
+if [ $show_all = 1 ]; then
+	all_files=`git diff --name-status -C $ref_1 $ref_2`
+	echo $all_files
+else
+	if [ $show_added = 1 ]; then
+		files_added=`git diff --name-status -C $ref_1 $ref_2 | grep -E '^A' | sed 's/^A\s*\(.*\)/\1/'`
+		echo $files_added
+	fi
+	
+	if [ $show_copied = 1 ]; then
+		files_copied=`git diff --name-status -C $ref_1 $ref_2 | grep -E '^C' | sed 's/^C\s*\(.*\)/\1/'`
+		echo $files_copied
+	fi
+	
+	if [ $show_deleted = 1 ]; then
+		files_deleted=`git diff --name-status -C $ref_1 $ref_2 | grep -E '^D' | sed 's/^D\s*\(.*\)/\1/'`
+		echo $files_deleted
+	fi
+	
+	if [ $show_modified = 1 ]; then
+		files_modified=`git diff --name-status -C $ref_1 $ref_2 | grep -E '^M' | sed 's/^M\s*\(.*\)/\1/'`
+		echo $files_modified
+	fi
+	
+	if [ $show_renamed = 1 ]; then
+		files_renamed=`git diff --name-status -C $ref_1 $ref_2 | grep -E '^R' | sed 's/^R\s*\(.*\)/\1/'`
+		echo $files_renamed
+	fi
+fi
+
+exit 0

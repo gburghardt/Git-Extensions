@@ -1,0 +1,97 @@
+#!/bin/bash
+
+txt_bold=`tput bold`
+txt_normal=`tput sgr0`
+
+function print_usage {
+	echo 'gtk-review: Invokes the git difftool on all files modified or added between two git branches or tags. Useful in code reviews for viewing diffs.'
+	echo 'Usage: gtk review <branch or tag 1> <branch or tag 2>'
+}
+
+if [ -z "$1" ]
+then
+	# review current branch with master
+	ref_1="master"
+	ref_2=`gtk current_branch`
+elif [ -z "$2" ]
+then
+	# review current branch with branch passed in
+	ref_1="$1"
+	ref_2=`gtk current_branch`
+else
+	ref_1="$1"
+	ref_2="$2"
+fi
+
+files_modified=`git diff --name-status -C $ref_1 $ref_2 | grep -E '^M' | sed 's/^M\s*\(.*\)/\1/'`
+files_added=`git diff --name-status -C $ref_1 $ref_2 | grep -E '^A' | sed 's/^A\s*\(.*\)/\1/'`
+files_deleted=`git diff --name-status -C $ref_1 $ref_2 | grep -E '^D' | sed 's/^D\s*\(.*\)/\1/'`
+files_renamed=`git diff --name-status -C $ref_1 $ref_2 | grep -E '^R' | sed 's/^R\s*\(.*\)/\1/'`
+files_copied=`git diff --name-status -C $ref_1 $ref_2 | grep -E '^C' | sed 's/^C\s*\(.*\)/\1/'`
+
+echo "${txt_bold}Begin reviewing files added, renamed, copied, removed and modified between $ref_1 and $ref_2.${txt_normal}"
+echo
+
+if [ ! -z "$files_added" ]
+then
+	echo "${txt_bold}These files were added in $ref_2:${txt_normal}"
+	echo "(git diff --name-status -C $ref_1 $ref_2 | grep -E '^A')"
+	
+	for file_name in $files_added
+	do
+		echo "    $file_name"
+	done
+	echo
+fi
+
+if [ ! -z "$files_renamed" ]
+then
+	echo "${txt_bold}These files were renamed in $ref_2:${txt_normal}"
+	echo "(git diff --name-status -C $ref_1 $ref_2 | grep -E '^R')"
+	
+	for file_name in $files_renamed
+	do
+		echo "    $file_name"
+	done
+	echo
+fi
+
+if [ ! -z "$files_copied" ]
+then
+	echo "${txt_bold}These files were copied in $ref_2:${txt_normal}"
+	echo "(git diff --name-status -C $ref_1 $ref_2 | grep -E '^C')"
+	
+	for file_name in $files_copied
+	do
+		echo "    $file_name"
+	done
+	echo
+fi
+
+if [ ! -z "$files_deleted" ]
+then
+	echo "${txt_bold}These files were deleted in $ref_2:${txt_normal}"
+	echo "(git diff --name-status -C $ref_1 $ref_2 | grep -E '^D')"
+	
+	for file_name in $files_deleted
+	do
+		echo "    $file_name"
+	done
+	echo
+fi
+
+if [ ! -z "$files_modified" ]
+then
+	echo "${txt_bold}Showing diffs for files modified between $ref_1 and $ref_2${txt_normal}"
+	echo "(git diff --name-status -C $ref_1 $ref_2 | grep -E '^M')"
+	
+	for file_name in $files_modified
+	do
+		git difftool $ref_1 $ref_2 -- $file_name
+	done
+fi
+
+echo
+echo "${txt_bold}Finished reviewing files between $ref_1 and $ref_2.${txt_normal}"
+
+exit $?
