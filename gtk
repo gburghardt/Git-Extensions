@@ -30,6 +30,10 @@ case $1 in
 		shift
 		$base_dir/gtk-review $@
 		;;
+	'help')
+		shift
+		$base_dir/gtk-$1 --help
+		;;
 esac
 
 exit 0
