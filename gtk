@@ -8,8 +8,29 @@ function get_current_branch() {
 }
 
 function print_usage() {
-	echo "gtk: Git Tool Kit"
-	echo "Usage: gtk <command> [arguments]"
+	echo "#    gtk: Git Tool Kit"
+	echo "#    Simplify commonly used Git commands with intelligent assumptions"
+	echo "#"
+	echo "#    Usage: gtk <command> [arguments]"
+	echo "#"
+	echo "#    Available commands:"
+	echo "#        current_branch"
+	echo "#        ls"
+	echo "#        review"
+	echo "#        help"
+	echo "#    "
+	echo "#    Show help for a specific command:"
+	echo "#    gtk help <command>"
+}
+
+function print_help() {
+	if [ -z "$1" ]; then
+		print_usage
+	elif [ "$1" = "current_branch" ]; then
+		echo "gtk current_branch: Displays the currently checked out branch."
+	else
+		$base_dir/gtk-$1 --help
+	fi
 }
 
 if [ -z "$1" ]
@@ -32,7 +53,7 @@ case $1 in
 		;;
 	'help')
 		shift
-		$base_dir/gtk-$1 --help
+		print_help "$1"
 		;;
 esac
 

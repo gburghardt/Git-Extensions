@@ -4,9 +4,37 @@ txt_bold=`tput bold`
 txt_normal=`tput sgr0`
 
 function print_usage {
-	echo 'gtk-review: Invokes the git difftool on all files modified or added between two git branches or tags. Useful in code reviews for viewing diffs.'
-	echo 'Usage: gtk review <branch or tag 1> <branch or tag 2>'
+	echo "#    gtk-review"
+	echo "#    "
+	echo "#    Invokes the git difftool on all files modified between two git"
+	echo "#    branches or tags, plus shows all added, deleted, copied and"
+	echo "#    moved files. Useful in code reviews for viewing diffs."
+	echo "#"
+	echo "#    Usage: gtk review [branch or tag 1] [branch or tag 2]"
+	echo "#"
+	echo "#    Examples"
+	echo "#"
+	echo "#    gtk review"
+	echo "#        Review current branch against master"
+	echo "#    "
+	echo "#    gtk review some_branch"
+	echo "#        Review some_branch against current branch"
+	echo "#    "
+	echo "#    gtk review branch1 branch2"
+	echo "#        Review branch1 against branch2, regardless of which branch"
+	echo "#        you are currently on."
+	echo "#    "
+	echo "#    Branch names, tag names, commit Sha's or relative commit names"
+	echo "#    (e.g. HEAD, HEAD~1, etc.) can be used."
 }
+
+case $1 in
+	--help)
+		shift
+		print_usage
+		exit $?
+		;;
+esac
 
 if [ -z "$1" ]
 then
