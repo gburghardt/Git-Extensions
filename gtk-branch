@@ -43,7 +43,8 @@ function create_remote_branch() {
 
 function delete_remote_branch() {
 	set_refs "$1" "$2"
-	echo 'delete branch'
+	echo_command "git push $remote_ref :$branch_ref"
+	git push $remote_ref :$branch_ref
 }
 
 function track_remote_branch() {
