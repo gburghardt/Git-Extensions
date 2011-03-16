@@ -43,6 +43,10 @@ function create_remote_branch() {
 
 function delete_remote_branch() {
 	set_refs "$1" "$2"
+	
+	echo_command "git branch -D $branch_ref"
+	git branch -D $branch_ref
+	
 	echo_command "git push $remote_ref :$branch_ref"
 	git push $remote_ref :$branch_ref
 }
