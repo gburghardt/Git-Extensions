@@ -40,6 +40,10 @@ then
 fi
 
 case $1 in
+	'branch')
+		shift
+		$base_dir/gtk-branch $@
+		;;
 	'current_branch')
 		get_current_branch
 		;;

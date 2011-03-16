@@ -12,9 +12,9 @@ remote_ref="origin"
 show_commands=0
 
 function echo_command() {
-	if [ "1" = "$show_commands" ]; then
+	#if [ "1" = "$show_commands" ]; then
 		echo "$1"
-	fi
+	#fi
 }
 
 function create_remote_branch() {
@@ -76,19 +76,25 @@ if [ -z "$1" ]; then
 	exit $?
 fi
 
+echo "branches"
+echo $@
+
 while [ ! -z "$1" ]
 do
 	case  "$1" in
 		"create")
 			shift
+			echo "Create branch"
 			create_remote_branch "$1" "$2"
 			;;
 		"track")
 			shift
+			echo "Track branch"
 			track_remote_branch "$1" "$2"
 			;;
 		"delete")
 			shift
+			echo "Delete branch"
 			delete_remote_branch "$1" "$2"
 			;;
 		"--show-commands")
@@ -99,10 +105,10 @@ do
 			print_usage
 			;;
 		*)
+			echo "?"
 			print_usage
 			;;
 	esac
 done
 
-
-exit $?
+exit 0
