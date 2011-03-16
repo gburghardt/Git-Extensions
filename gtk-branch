@@ -12,9 +12,9 @@ remote_ref="origin"
 show_commands=0
 
 function echo_command() {
-	#if [ "1" = "$show_commands" ]; then
+	if [ "1" = "$show_commands" ]; then
 		echo "$1"
-	#fi
+	fi
 }
 
 function create_remote_branch() {
@@ -76,8 +76,6 @@ if [ -z "$1" ]; then
 	exit $?
 fi
 
-echo "branches"
-echo $@
 
 while [ ! -z "$1" ]
 do
@@ -105,7 +103,6 @@ do
 			print_usage
 			;;
 		*)
-			echo "?"
 			print_usage
 			;;
 	esac
