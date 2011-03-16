@@ -1,0 +1,108 @@
+#!/bin/bash
+
+#git branch test-branch
+#git checkout test-branch
+#git push origin test-branch
+#git checkout master
+#git branch -D test-branch
+#git checkout --track origin/test-branch
+
+branch_ref=""
+remote_ref="origin"
+show_commands=0
+
+function echo_command() {
+	if [ "1" = "$show_commands" ]; then
+		echo "$1"
+	fi
+}
+
+function create_remote_branch() {
+	set_refs "$1" "$2"
+	echo_command "git checkout master"
+	git checkout master
+	
+	echo_command "git branch $branch_ref"
+	git branch $branch_ref
+	
+	echo_command "git checkout $branch_ref"
+	git checkout $branch_ref
+	
+	echo_command "git push $remote_ref $branch_ref"
+	git push $remote_ref $branch_ref
+	
+	echo_command "git checkout master"
+	git checkout master
+	
+	echo_command "git branch -D $branch_ref"
+	git branch -D $branch_ref
+	
+	echo_command "git checkout -t $remote_ref/$branch_ref"
+	git checkout -t $remote_ref/$branch_ref
+}
+
+function delete_remote_branch() {
+	set_refs "$1" "$2"
+	echo 'delete branch'
+}
+
+function track_remote_branch() {
+	set_refs "$1" "$2"
+	echo_command "git checkout -t $remote_ref/$branch_ref"
+	git checkout -t $remote_ref/$branch_ref
+}
+
+function set_refs() {
+	if [ -z "$2" ]; then
+		remote_ref="origin"
+	else
+		remote_ref="$2"
+	fi
+
+	if [ -z "$1" ]; then
+		print_usage
+	else
+		branch_ref="$1"
+	fi
+}
+
+function print_usage() {
+	echo 'usage'
+	exit 0
+}
+
+if [ -z "$1" ]; then
+	print_usage
+	exit $?
+fi
+
+while [ ! -z "$1" ]
+do
+	case  "$1" in
+		"create")
+			shift
+			create_remote_branch "$1" "$2"
+			;;
+		"track")
+			shift
+			track_remote_branch "$1" "$2"
+			;;
+		"delete")
+			shift
+			delete_remote_branch "$1" "$2"
+			;;
+		"--show-commands")
+			shift
+			show_commands=1
+			;;
+		"--help")
+			print_usage
+			;;
+		*)
+			print_usage
+			;;
+	esac
+done
+
+
+exit $?
