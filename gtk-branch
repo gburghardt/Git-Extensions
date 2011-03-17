@@ -58,21 +58,33 @@ function track_remote_branch() {
 }
 
 function set_refs() {
-	if [ -z "$2" ]; then
-		remote_ref="origin"
-	else
-		remote_ref="$2"
-	fi
-
 	if [ -z "$1" ]; then
 		print_usage
-	else
+	elif [ -z "$2" ]; then
 		branch_ref="$1"
+		remote_ref="origin"
+	else
+		branch_ref="$2"
+		remote_ref="$1"
 	fi
 }
 
 function print_usage() {
-	echo 'usage'
+	echo "#    gtk-branch"
+	echo "#    Create, delete and track remote branches in Git."
+	echo "#    "
+	echo "#    gtk branch <command> [options] <remote or branch name> [branch name]"
+	echo "#    "
+	echo "#    gtk branch"
+	echo "#    gtk branch --help"
+	echo "#        Display this help messsage"
+	echo "#    "
+	echo "#    gtk branch create mybranch"
+	echo "#        Create a new branch called mybranch on origin"
+	echo "#    "
+	echo "#    gtk branch create myremote mybranch"
+	echo "#        Create a new branch on the remote called myremote"
+	echo "#        and name the branch mybranch."
 	exit 0
 }
 
