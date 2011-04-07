@@ -1,12 +1,5 @@
 #!/bin/bash
 
-#git branch test-branch
-#git checkout test-branch
-#git push origin test-branch
-#git checkout master
-#git branch -D test-branch
-#git checkout --track origin/test-branch
-
 branch_ref=""
 remote_ref="origin"
 show_commands=0
@@ -89,7 +82,7 @@ function print_usage() {
 }
 
 if [ -z "$1" ]; then
-	print_usage
+	gtk current_branch
 	exit $?
 fi
 

@@ -2,6 +2,7 @@
 
 txt_bold=`tput bold`
 txt_normal=`tput sgr0`
+no_difftool=0
 
 function print_usage {
 	echo "#    gtk-review"
@@ -26,9 +27,22 @@ function print_usage {
 	echo "#    "
 	echo "#    Branch names, tag names, commit Sha's or relative commit names"
 	echo "#    (e.g. HEAD, HEAD~1, etc.) can be used."
+	echo "#    "
+	echo "#    Options:"
+	echo "#    "
+	echo "#    --no-difftool"
+	echo "#        Show normal diffs on the command line rather than using"
+	echo "#        the configured diff tool"
+	echo "#    "
+	echo "#    --help"
+	echo "#        Display this help message"
 }
 
 case $1 in
+	--no-difftool)
+		shift
+		no_difftool=1
+		;;
 	--help)
 		shift
 		print_usage
@@ -115,7 +129,20 @@ then
 	
 	for file_name in $files_modified
 	do
-		git difftool $ref_1 $ref_2 -- $file_name
+		if [ $no_difftool = 0 ]; then
+			git difftool $ref_1 $ref_2 -- $file_name
+		else
+			# Export a new $PAGER value because git-diff redirects the output to the default
+			# system pager. Instead, use cat to display the full diff with no paging, then
+			# revert $PAGER to the original value
+			old_pager="$PAGER"
+			export PAGER=cat
+			echo
+			echo
+			echo
+			git diff $ref_1 $ref_2 -- $file_name
+			export PAGER="$old_pager"
+		fi
 	done
 fi
 
