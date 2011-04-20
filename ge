@@ -8,14 +8,13 @@ function get_current_branch() {
 }
 
 function print_usage() {
-	echo "#    ge: Git Tool Kit"
+	echo "#    ge: Git Extensions"
 	echo "#    Simplify commonly used Git commands with intelligent assumptions"
 	echo "#"
 	echo "#    Usage: ge <command> [arguments]"
 	echo "#"
 	echo "#    Available commands:"
 	echo "#        branch"
-	echo "#        current_branch"
 	echo "#        ls"
 	echo "#        review"
 	echo "#        help"
