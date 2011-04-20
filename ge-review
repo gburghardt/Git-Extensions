@@ -5,23 +5,23 @@ txt_normal=`tput sgr0`
 no_difftool=0
 
 function print_usage {
-	echo "#    gtk-review"
+	echo "#    ge-review"
 	echo "#    "
 	echo "#    Invokes the git difftool on all files modified between two git"
 	echo "#    branches or tags, plus shows all added, deleted, copied and"
 	echo "#    moved files. Useful in code reviews for viewing diffs."
 	echo "#"
-	echo "#    Usage: gtk review [branch or tag 1] [branch or tag 2]"
+	echo "#    Usage: ge review [branch or tag 1] [branch or tag 2]"
 	echo "#"
 	echo "#    Examples"
 	echo "#"
-	echo "#    gtk review"
+	echo "#    ge review"
 	echo "#        Review current branch against master"
 	echo "#    "
-	echo "#    gtk review some_branch"
+	echo "#    ge review some_branch"
 	echo "#        Review some_branch against current branch"
 	echo "#    "
-	echo "#    gtk review branch1 branch2"
+	echo "#    ge review branch1 branch2"
 	echo "#        Review branch1 against branch2, regardless of which branch"
 	echo "#        you are currently on."
 	echo "#    "
@@ -54,12 +54,12 @@ if [ -z "$1" ]
 then
 	# review current branch with master
 	ref_1="master"
-	ref_2=`gtk current_branch`
+	ref_2=`ge current_branch`
 elif [ -z "$2" ]
 then
 	# review current branch with branch passed in
 	ref_1="$1"
-	ref_2=`gtk current_branch`
+	ref_2=`ge current_branch`
 else
 	ref_1="$1"
 	ref_2="$2"

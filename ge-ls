@@ -4,18 +4,18 @@ txt_bold=`tput bold`
 txt_normal=`tput sgr0`
 
 function print_usage() {
-	echo "#    gtk-ls"
+	echo "#    ge-ls"
 	echo "#    List files added, copied, renamed, deleted and modified between two branches and/or tags."
 	echo "#"
 	echo "#    Usage:"
 	echo "#"
-	echo "#    gtk ls"
+	echo "#    ge ls"
 	echo "#        Lists all files touched between current branch and master"
 	echo "#"
-	echo "#    gtk ls mybranch"
+	echo "#    ge ls mybranch"
 	echo "#        Lists all files touched between mybranch and current branch"
 	echo "#"
-	echo "#    gtk ls ref1 ref2"
+	echo "#    ge ls ref1 ref2"
 	echo "#        Lists all files touched between the two branches, commits or tags"
 	echo "#"
 	echo "#    Options:"
@@ -30,13 +30,13 @@ function print_usage() {
 	echo "#"
 	echo "#    Examples:"
 	echo "#"
-	echo "#    gtk ls -a branch1 branch2"
+	echo "#    ge ls -a branch1 branch2"
 	echo "#        List only added files between branch1 and branch2"
 	echo "#"
-	echo "#    gtk ls -a -d branch1 branch2"
+	echo "#    ge ls -a -d branch1 branch2"
 	echo "#        List only added and deleted files between branch1 and branch2"
 	echo "#"
-	echo "#    gtk ls -m -d"
+	echo "#    ge ls -m -d"
 	echo "#        List only modified and deleted files between master and current branch"
 }
 
@@ -84,10 +84,10 @@ done
 
 if [ -z "$1" ]; then
 	ref_1="master"
-	ref_2=`gtk current_branch`
+	ref_2=`ge current_branch`
 elif [ -z "$2" ]; then
 	ref_1="$1"
-	ref_2=`gtk current_branch`
+	ref_2=`ge current_branch`
 else
 	ref_1="$1"
 	ref_2="$2"

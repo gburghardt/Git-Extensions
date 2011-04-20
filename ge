@@ -8,10 +8,10 @@ function get_current_branch() {
 }
 
 function print_usage() {
-	echo "#    gtk: Git Tool Kit"
+	echo "#    ge: Git Tool Kit"
 	echo "#    Simplify commonly used Git commands with intelligent assumptions"
 	echo "#"
-	echo "#    Usage: gtk <command> [arguments]"
+	echo "#    Usage: ge <command> [arguments]"
 	echo "#"
 	echo "#    Available commands:"
 	echo "#        branch"
@@ -21,16 +21,16 @@ function print_usage() {
 	echo "#        help"
 	echo "#    "
 	echo "#    Show help for a specific command:"
-	echo "#    gtk help <command>"
+	echo "#    ge help <command>"
 }
 
 function print_help() {
 	if [ -z "$1" ]; then
 		print_usage
 	elif [ "$1" = "current_branch" ]; then
-		echo "gtk current_branch: Displays the currently checked out branch."
+		echo "ge current_branch: Displays the currently checked out branch."
 	else
-		$base_dir/gtk-$1 --help
+		$base_dir/ge-$1 --help
 	fi
 }
 
@@ -43,18 +43,18 @@ fi
 case $1 in
 	'branch')
 		shift
-		$base_dir/gtk-branch $@
+		$base_dir/ge-branch $@
 		;;
 	'current_branch')
 		get_current_branch
 		;;
 	'ls')
 		shift
-		$base_dir/gtk-ls $@
+		$base_dir/ge-ls $@
 		;;
 	'review')
 		shift
-		$base_dir/gtk-review $@
+		$base_dir/ge-review $@
 		;;
 	'help')
 		shift
