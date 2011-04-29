@@ -28,8 +28,10 @@ function print_help() {
 		print_usage
 	elif [ "$1" = "current_branch" ]; then
 		echo "ge current_branch: Displays the currently checked out branch."
-	else
+	elif [ -f "$base_dir/ge-$1" ]; then
 		$base_dir/ge-$1 --help
+	else
+		print_usage
 	fi
 }
 
@@ -58,6 +60,10 @@ case $1 in
 	'help')
 		shift
 		print_help "$1"
+		;;
+	'*')
+		shift
+		print_help
 		;;
 esac
 
