@@ -6,26 +6,22 @@ show_commands=0
 
 function echo_command() {
 	if [ "1" = "$show_commands" ]; then
-		echo "$1"
+		echo "    Command: $1"
 	fi
 }
 
 function create_remote_branch() {
+	orig_branch=`ge current_branch`
 	set_refs "$1" "$2"
-	echo_command "git checkout master"
-	git checkout master
 	
-	echo_command "git branch $branch_ref"
-	git branch $branch_ref
-	
-	echo_command "git checkout $branch_ref"
-	git checkout $branch_ref
+	echo_command "git checkout -b $branch_ref"
+	git checkout -b $branch_ref
 	
 	echo_command "git push $remote_ref $branch_ref"
 	git push $remote_ref $branch_ref
 	
-	echo_command "git checkout master"
-	git checkout master
+	echo_command "git checkout $orig_branch"
+	git checkout $orig_branch
 	
 	echo_command "git branch -D $branch_ref"
 	git branch -D $branch_ref
@@ -36,6 +32,8 @@ function create_remote_branch() {
 
 function delete_remote_branch() {
 	set_refs "$1" "$2"
+	echo_command "git checkout master"
+	git checkout master
 	
 	echo_command "git branch -D $branch_ref"
 	git branch -D $branch_ref
@@ -90,6 +88,14 @@ fi
 while [ ! -z "$1" ]
 do
 	case  "$1" in
+		"--show-commands")
+			shift
+			show_commands=1
+			;;
+		"--help")
+			print_usage
+			exit 0
+			;;
 		"create")
 			shift
 			echo "Create branch"
@@ -105,15 +111,8 @@ do
 			echo "Delete branch"
 			delete_remote_branch "$1" "$2"
 			;;
-		"--show-commands")
-			shift
-			show_commands=1
-			;;
-		"--help")
-			print_usage
-			;;
 		*)
-			print_usage
+			shift
 			;;
 	esac
 done
