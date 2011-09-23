@@ -57,11 +57,15 @@ case $1 in
 		shift
 		$base_dir/ge-review $@
 		;;
+  'svn')
+    shift
+    $base_dir/ge-svn $@
+    ;;
 	'help')
 		shift
 		print_help "$1"
 		;;
-	'*')
+	*)
 		shift
 		print_help
 		;;
