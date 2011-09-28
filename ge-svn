@@ -1,5 +1,8 @@
-#/bin/bash
+#!/bin/bash
 
+base_dir=`which ge | xargs dirname`
+txt_bold=`tput bold`
+txt_normal=`tput sgr0`
 cd_back=0
 svn_usernames=''
 repo_dir='.'
@@ -7,92 +10,120 @@ svn_log_limit=''
 format='usernames'
 
 function ge_svn_authors() {
-  while [ ! -z "$1" ]
-  do
-  	case  "$1" in
-  		"-l")
-  			shift
-  			svn_log_limit=$1
-  			shift
-  			;;
-  		"-f")
-  		  shift
-  		  format=$1
-  		  shift
-  		  ;;
-      "--help")
-        shift
-        print_usage
-        exit $?
-        ;;
-  		*)
-  			break
-  	esac
-  done
+	while [ ! -z "$1" ]
+	do
+		case	"$1" in
+			"-l")
+				shift
+				svn_log_limit=$1
+				shift
+				;;
+			"-f")
+				shift
+				format=$1
+				shift
+				;;
+			"--help")
+				shift
+				print_usage
+				exit $?
+				;;
+			*)
+				break
+		esac
+	done
 
-  if [ -z "$1" ]; then
-    repo_dir='.'
-  else
-    repo_dir="$1"
-  fi
+	if [ -z "$1" ]; then
+		repo_dir='.'
+	else
+		repo_dir="$1"
+	fi
 
-  svn_usernames=`ge_svn_authors_print_usernames`
+	svn_usernames=`ge_svn_authors_print_usernames`
 
-  if [ $format = 'template' ]; then
-    echo "`ge_svn_authors_print_template "$svn_usernames"`"
-  else
-    echo "$svn_usernames"
-  fi
+	if [ $format = 'template' ]; then
+		echo "`ge_svn_authors_print_template "$svn_usernames"`"
+	else
+		echo "$svn_usernames"
+	fi
 }
 
 function ge_svn_authors_print_usernames() {
-  if [ -d $repo_dir ] && [ "$repo_dir" != '.' ]; then
-    cd $repo_dir
-    cd_back=1
-  fi
+	if [ -d $repo_dir ] && [ "$repo_dir" != '.' ]; then
+		cd $repo_dir
+		cd_back=1
+	fi
 
-  if [ -z "$svn_log_limit" ]; then
-    svn log -q 50 | grep -E '^r\d+ | \w+' | awk '{print $3}' | sort | uniq
-  else
-    svn log -ql $svn_log_limit -q | grep -E '^r\d+ | \w+' | awk '{print $3}' | sort | uniq
-  fi
+	if [ -z "$svn_log_limit" ]; then
+		svn log -q 50 | grep -E '^r\d+ | \w+' | awk '{print $3}' | sort | uniq
+	else
+		svn log -ql $svn_log_limit -q | grep -E '^r\d+ | \w+' | awk '{print $3}' | sort | uniq
+	fi
 
-  if [ 1 -eq $cd_back ]; then
-    cd -
-  fi
+	if [ 1 -eq $cd_back ]; then
+		cd -
+	fi
 }
 
 function ge_svn_authors_print_template() {
-  for username in $1; do
-    echo "$username = NAME <$username@tribune.com>"
-  done
+	for username in $1; do
+		echo "$username = NAME <$username@tribune.com>"
+	done
 }
 
 function print_usage() {
-  echo "#    ge svn"
-  echo "#    Handy short cuts for git-svn related actions."
-  echo "#"
-  echo "#    ge svn <command> [options]"
-  echo "#"
-  echo "#    ge svn --help OR ge help svn"
-  echo "#        Display this help message"
-  echo "#    "
-  echo "#    ge svn authors"
-  echo "#        Export SVN usernames and optionally format them into a template"
-  echo "#        that can be used as a Git SVN authors file."
-  echo "#    "
-  echo "#        -l <number>  Max number of SVN log messages to pull down."
-  echo "#                     Defaults to unlimited, which can take a while for"
-  echo "#                     large SVN repositories."
-  echo "#        -f template  Format the output into a git svn_authors file,"
-  echo "#                     useful when importing an SVN repository into Git."
+	echo "#    ${txt_bold}ge svn${txt_normal}"
+	echo "#        Handy short cuts for git-svn related actions."
+	echo "#"
+	echo "#    ge svn <command> [options]"
+	echo "#"
+	echo "#    ${txt_bold}ge svn --help${txt_normal} OR ${txt_bold}ge help svn${txt_normal}"
+	echo "#	       Display this help message"
+	echo "#"
+	echo "#    ${txt_bold}ge svn authors [options]${txt_normal}"
+	echo "#        Export SVN usernames and optionally format them into a template"
+	echo "#        that can be used as a Git SVN authors file."
+	echo "#"
+	echo "#        -l <number>: Max number of SVN log messages to pull down."
+	echo "#                     Defaults to unlimited, which can take a while for"
+	echo "#                     large SVN repositories."
+	echo "#    "
+	echo "#        -f template: Format the output into a git svn_authors file,"
+	echo "#                     useful when importing an SVN repository into Git."
+	echo "#"
+	echo "#    ${txt_bold}ge svn import [import options] <SVN repository URL> <destination directory> [git svn options]${txt_normal}"
+	echo "#        Imports an SVN repository into Git."
+	echo "#    "
+	echo "#        --interactive: In interactive mode, the user is prompted to enter"
+	echo "#                       the necessary information for importing the SVN"
+	echo "#                       repository history."
+	echo "#    "
+	echo "#        --svn-authors-file: Path to a text file mapping SVN authors to"
+	echo "#                            users in Git. This file can be generated using"
+	echo "#                            the ${txt_bold}ge svn authors${txt_normal} command."
+	echo "#    "
+	echo "#        --revision <number>: The revision in SVN to start the import at."
+	echo "#                             Defaults to the first revision. For large"
+	echo "#                             SVN repositories, consider starting from a"
+	echo "#                             later revision in order to cut down on the"
+	echo "#                             import time."
+	echo "#    "
+	echo "#        --username <string>: The SVN username"
 }
 
-if [ $1 = 'authors' ]; then
-  shift
-  ge_svn_authors $@
-else
-  print_usage
-fi
+case $1 in
+	'authors')
+		shift
+		ge_svn_authors $@
+		;;
+	'import')
+		shift
+		$base_dir/ge-svn-import $@
+		;;
+	*)
+		print_usage
+		exit
+		;;
+esac
 
 exit $?

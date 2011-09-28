@@ -1,0 +1,167 @@
+#!/bin/bash
+
+current_dir=`pwd`
+git_svn_init_args=""
+git_svn_fetch_args=""
+interactive_mode=0
+log_file="./svn_import.log"
+svn_authors_files=""
+svn_destination_dir=""
+svn_repo_url=""
+svn_start_revision=1
+svn_username=""
+
+function ge_svn_import() {
+	touch $log_file
+	#echo "Importing svn repo from URL $svn_repo_url"
+	#echo "to local directory $svn_destination_dir"
+	#echo "with username $svn_username. Authors are coming from"
+	#echo "$svn_authors_file, and messages logged to"
+	#echo "$log_file"
+
+	(ge_svn_import_steps $@) | tee $log_file
+}
+
+function ge_svn_import_steps() {
+	if [ -z "$svn_repo_url" ]; then
+		echo "FATAL: No SVN repository URL was provided."
+		exit 1
+	fi
+
+	echo "Importing SVN repository from $svn_repo_url into Git at $svn_destination_dir"
+
+	if [ -z "$svn_authors_file" ]; then
+		echo "WARN: No SVN authors file was found. Your new Git history will be incomplete."
+	elif [ ! -z "$svn_authors_file" ] && [ ! -f $svn_authors_file ]; then
+		echo "FATAL: The SVN authors file ($svn_authors_file) does not exist or is not readable."
+		exit 1
+	else
+		echo "Using $svn_authors_file to import SVN history."
+		git_svn_fetch_args="$git_svn_fetch_args --authors-file=$svn_authors_file"
+		git_svn_init_args="$git_svn_init_args --authors-file=$svn_authors_file"
+	fi
+	
+	if [ -d $svn_destination_dir ]; then
+		echo "WARN: Destination directory already exists. Deleting the destination directory..."
+		echo "rm -vrf $svn_destination_dir"
+		rm -vrf $svn_destination_dir
+	fi
+	
+	echo "Creating destination directory $svn_destination_dir..."
+	echo "mkdir -vp $svn_destination_dir"
+	mkdir -vp $svn_destination_dir
+
+	if [ ! -d $svn_destination_dir ]; then
+		echo "FATAL: Failed to create $svn_destination_dir."
+		exit 1
+	else
+		echo "Destination directory created at $svn_destination_dir"
+	fi
+
+	echo "Listing contents of SVN repository URL..."
+	svn ls $svn_repo_url
+
+	if [ 1 -eq $? ]; then
+		echo "FATAL: The SVN repository URL $svn_repo_url is incorrect or does not exist."
+		exit 1
+	else
+		echo "The SVN repository URL $svn_repo_url exists."
+	fi
+
+	echo "Initializing the Git-SVN repository..."
+	echo "git svn init --stdlayout --no-metadata $svn_repo_url $svn_destination_dir"
+	git svn init --stdlayout --no-metadata $svn_repo_url $svn_destination_dir
+	echo "Git-SVN repository initialized."
+	echo "Begin fetching commits..."
+	echo "cd $svn_destination_dir"
+	cd $svn_destination_dir
+	echo "git svn fetch --authors-file=$svn_authors_file -r $svn_start_revision:HEAD"
+	git svn fetch --authors-file=$svn_authors_file -r $svn_start_revision:HEAD
+	echo "Finished fetching commits."
+
+	echo "Finished."
+}
+
+function ge_svn_import_interactive() {
+	ge_svn_import_read_repo_url
+	ge_svn_import_read_destination_dir
+	ge_svn_import_read_username
+	ge_svn_import_read_authors_file
+	ge_svn_import_read_revision
+	ge_svn_import $@
+}
+
+function ge_svn_import_read_repo_url() {
+	echo -n "SVN repo URL: "
+	read svn_repo_url
+	echo "# SVN repo located at $svn_repo_url"
+}
+
+function ge_svn_import_read_username() {
+	echo -n "SVN username: "
+	read svn_username
+	echo "# SVN username is $svn_username"
+}
+
+function ge_svn_import_read_authors_file() {
+	echo -n "SVN authors file: "
+	read -e svn_authors_file
+	echo "# SVN authors file located at $svn_authors_file"
+}
+
+function ge_svn_import_read_revision() {
+	echo -n "Start import at revision: "
+	read svn_start_revision
+
+	if [ -z "$svn_start_revision" ]; then
+		svn_start_revision=1
+	fi
+
+	echo "# Starting import at revision $svn_start_revision"
+}
+
+function ge_svn_import_read_destination_dir() {
+	echo -n "Destination directory: "
+	read -e svn_destination_dir
+	echo "# Creating Git repo in $svn_destination_dir"
+}
+
+while [ ! -z "$1" ]; do
+	case $1 in
+		'--interactive')
+			shift
+			interactive_mode=1
+			;;
+		'--svn-authors-file')
+			shift
+			svn_authors_file=$1
+			shift
+			;;
+		'--revision')
+			shift
+			svn_start_revision=$1
+			shift
+			;;
+		'--username')
+			shift
+			svn_username=$1
+			shift
+			;;
+		*)
+			break
+			;;
+	esac
+done
+
+if [ $interactive_mode -eq 1 ]; then
+	echo "Entering interactive mode..."
+	ge_svn_import_interactive $@
+else
+	svn_repo_url=$1
+	shift
+	svn_destination_dir=$1
+	shift
+	ge_svn_import $@
+fi
+
+exit $?
