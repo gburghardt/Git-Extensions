@@ -23,13 +23,12 @@ Easy SVN Imports
 
 The `ge svn` utility provides easy ways to generate an SVN authors file, plus do the initial import into SVN. Additionally, all command line output is saved to a log file in the current working directory called `svn_import_YYYY-MM-DD.HH.MM.log`.
 
-
-
 1. `cd path/to/subversion_repository`
 2. `ge svn authors -f template > svn_authors.txt`
 3. Manually edit svn_authors.txt to flesh out the names and email addresses
 4. `ge svn import`
 5. Follow the prompts on screen.
+6. Have a cup of coffee (or leave for the weekend, depending on how big the SVN repository is).
 
 The `ge svn import` utility steps you through the process of importing an SVN repository into Git. If you want to make things scriptable, you can always pass in flags instead of using the interactive mode:
 
