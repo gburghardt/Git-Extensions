@@ -10,5 +10,5 @@ Installation
 7. Open your bash profile, which could be any of these files: ~/.bash_profile, ~/.bashrc, ~/.profile
 8. Add this line and save the file: `export PATH="$PATH:$HOME/bin/ge"`
 9. Reopen any open shells
-10. Type "`which ge`" from the command line. It should find the ge command.
-11. Type "`ge help`" for a list of commands.
+10. Type `which ge` from the command line. It should find the ge command.
+11. Type `ge help` for a list of commands.
