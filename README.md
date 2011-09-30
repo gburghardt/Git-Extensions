@@ -23,7 +23,7 @@ Easy SVN Imports
 
 The `ge svn` utility provides easy ways to generate an SVN authors file, plus do the initial import into SVN.
 
-	cd path/to/subversion repository
+	cd path/to/subversion_repository
 	ge svn authors -f template > svn_authors.txt
 	cd path/to/git/import
 	ge svn import
