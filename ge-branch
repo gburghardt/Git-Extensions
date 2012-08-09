@@ -14,17 +14,8 @@ function create_remote_branch() {
 	orig_branch=`ge current_branch`
 	set_refs "$1" "$2"
 	
-	echo_command "git checkout -b $branch_ref"
-	git checkout -b $branch_ref
-	
-	echo_command "git push $remote_ref $branch_ref"
-	git push $remote_ref $branch_ref
-	
-	echo_command "git checkout $orig_branch"
-	git checkout $orig_branch
-	
-	echo_command "git branch -D $branch_ref"
-	git branch -D $branch_ref
+	echo_command "git push $remote_ref HEAD:$branch_ref"
+	git push $remote_ref HEAD:$branch_ref
 	
 	echo_command "git checkout -t $remote_ref/$branch_ref"
 	git checkout -t $remote_ref/$branch_ref
