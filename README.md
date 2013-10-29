@@ -1,10 +1,12 @@
-Git Extensions (ge)
-===================
+# Git Extensions (ge)
 
 Git Extensions provides some wrapper shell scripts around Git with intelligent defaults.
 
-Installation
-------------
+## Downloads
+
+- [1.0.1](https://github.com/gburghardt/Git-Extensions/archive/v1.0.1.zip)
+
+## Installation
 
 1. Open a command line shell
 2. `mkdir ~/bin`
@@ -18,8 +20,7 @@ Installation
 10. Type `which ge` from the command line. It should find the ge command.
 11. Type `ge help` for a list of commands.
 
-Easy SVN Imports
-----------------
+## Easy SVN Imports
 
 The `ge svn` utility provides easy ways to generate an SVN authors file, plus do the initial import into SVN. Additionally, all command line output is saved to a log file in the current working directory called `svn_import_YYYY-MM-DD.HH.MM.log`.
 
@@ -33,3 +34,7 @@ The `ge svn` utility provides easy ways to generate an SVN authors file, plus do
 The `ge svn import` utility steps you through the process of importing an SVN repository into Git. If you want to make things scriptable, you can always pass in flags instead of using the interactive mode:
 
 	ge svn import --authors-file=path/to/authors/file --usename=svn_username <svn url> <destination>
+
+## Changelog
+
+- v1.0.1 (10/29/2013) &mdash; Fixing a bug with executing `ge svn authors` without passing the `-l` flag
