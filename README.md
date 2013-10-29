@@ -35,6 +35,10 @@ The `ge svn import` utility steps you through the process of importing an SVN re
 
 	ge svn import --authors-file=path/to/authors/file --usename=svn_username <svn url> <destination>
 
+## Getting Help
+
+You can run `ge svn --help` from the command line or [post an issue](https://github.com/gburghardt/Git-Extensions/issues) on GitHub.
+
 ## Changelog
 
 - v1.0.1 (10/29/2013) &mdash; Fixing a bug with executing `ge svn authors` without passing the `-l` flag
