@@ -55,7 +55,7 @@ function ge_svn_authors_print_usernames() {
 	fi
 
 	if [ -z "$svn_log_limit" ]; then
-		svn log -q 50 | grep -E '^r\d+ | \w+' | awk '{print $3}' | sort | uniq
+		svn log -q | grep -E '^r\d+ | \w+' | awk '{print $3}' | sort | uniq
 	else
 		svn log -ql $svn_log_limit -q | grep -E '^r\d+ | \w+' | awk '{print $3}' | sort | uniq
 	fi
