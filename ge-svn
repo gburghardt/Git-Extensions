@@ -67,7 +67,7 @@ function ge_svn_authors_print_usernames() {
 
 function ge_svn_authors_print_template() {
 	for username in $1; do
-		echo "$username = NAME <$username@tribune.com>"
+		echo "$username = NAME <$username@example.com>"
 	done
 }
 
